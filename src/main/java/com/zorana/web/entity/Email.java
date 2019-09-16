@@ -68,6 +68,17 @@ public class Email {
         this.emailid = emailid;
     }
 
+    public Email(Integer emailid, String fromUser, String cc, String toUser, String subject, String body, Date sentDate, User userid) {
+        this.emailid = emailid;
+        this.fromUser = fromUser;
+        this.cc = cc;
+        this.toUser = toUser;
+        this.subject = subject;
+        this.body = body;
+        this.sentDate = sentDate;
+        this.userid = userid;
+    }
+
     public Integer getEmailid() {
         return emailid;
     }

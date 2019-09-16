@@ -5,6 +5,7 @@
     <class>com.zorana.web.entity.Email</class>
     <class>com.zorana.web.entity.User</class>
     <class>com.zorana.web.entity.Proba</class>
+    <class>com.zorana.web.entity.Sms</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/messaging?zeroDateTimeBehavior=convertToNull"/>

@@ -6,11 +6,13 @@
 package com.zorana.web.controller;
 
 import com.zorana.web.entity.Email;
+import com.zorana.web.entity.Sms;
 import com.zorana.web.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import com.zorana.web.entity.User;
 import com.zorana.web.service.EmailService;
+import com.zorana.web.service.MessageService;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,9 +32,12 @@ import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -51,14 +56,16 @@ public class UserController {
 
     private UserService userService;
     private EmailService emailService;
+    private MessageService messageService;
 
     public UserController() {
     }
 
     @Autowired
-    public UserController(UserService userService, EmailService emailService) {
+    public UserController(UserService userService, EmailService emailService, MessageService messageService) {
         this.userService = userService;
         this.emailService = emailService;
+        this.messageService = messageService;
     }
 
     User korisnik = null;
@@ -74,6 +81,13 @@ public class UserController {
     public ModelAndView email(HttpServletResponse response) throws IOException {
         ModelAndView mv = new ModelAndView();
         mv.setViewName("email");
+        return mv;
+    }
+
+    @RequestMapping(value = "/sms", method = RequestMethod.GET)
+    public ModelAndView sms(HttpServletResponse response) throws IOException {
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("sms");
         return mv;
     }
 
@@ -120,54 +134,11 @@ public class UserController {
         email.setUserid(korisnik);
         emailService.saveEmail(email);
 
-        System.out.println("Korisnik id" + korisnik.getEmailaddress());
-
-        System.out.println("ime fajla" + file.getName());
         if (!file.isEmpty()) {
 
             emailService.sendEmailWithAttachment(email, file);
-//            try {
-//                MimeMessage msg = javaMailSender.createMimeMessage();
-//                MimeMessageHelper helper = new MimeMessageHelper(msg, true);
-//                Multipart multipart = new MimeMultipart();
-//                MimeBodyPart attachPart = new MimeBodyPart();
-//                DataSource ds;
-//                try {
-//                    ds = new ByteArrayDataSource(file.getBytes(), file.getContentType());
-//                    attachPart.setDataHandler(new DataHandler(ds));
-//                } catch (IOException ex) {
-//                    Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
-//                }
-//
-//                attachPart.setFileName(file.getOriginalFilename());
-//                attachPart.setDisposition(Part.ATTACHMENT);
-//
-//                multipart.addBodyPart(attachPart);
-//                msg.setContent(multipart);
-//                helper.setTo(to);
-//                helper.setText(body);
-//                helper.setSubject(subject);
-//                helper.setFrom("ikonic.zorana@gmail.com");
-//                if (!cc.isEmpty()) {
-//                    helper.setCc(cc);
-//                }
-//                System.out.println("ove je");
-//                javaMailSender.send(msg);
-//            } catch (MessagingException ex) {
-//                Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
-//            }
+
         } else {
-//            SimpleMailMessage simplemailmsg = new SimpleMailMessage();
-//            simplemailmsg.setSubject(subject);
-//            simplemailmsg.setText(body);
-//
-//            simplemailmsg.setTo(to);
-//            if (!cc.isEmpty()) {
-//                simplemailmsg.setCc(cc);
-//            }
-//            javaMailSender.send(simplemailmsg);
-//
-//            System.out.println("obicna por");
             emailService.sendEmail(email);
         }
 
@@ -177,7 +148,6 @@ public class UserController {
         return mav;
     }
 
-   
     @RequestMapping(value = "/viewemails", method = RequestMethod.GET)
     public ModelAndView viewEmails(HttpServletResponse response) throws IOException {
         ModelAndView mav = new ModelAndView();
@@ -188,6 +158,28 @@ public class UserController {
         mav.addObject("emailList", emailList);
         mav.setViewName("viewemails");
         return mav;
+    }
+    
+    @RequestMapping(value = "/messageProcess", method = RequestMethod.POST)
+    public ModelAndView messageProcess(@RequestParam("to") String to, @RequestParam("body") String body) throws Exception {
+        Sms message = new Sms();
+        message.setTonumber(to);
+        message.setMessage(body);
+        message.setUserid(korisnik);
+        
+        messageService.saveSMS(message);
+        messageService.sendSMS(message);
+
+        ModelAndView mav = new ModelAndView();
+        mav.setViewName("sms");
+
+        return mav;
+    }
+    
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+    public ResponseEntity delete(HttpServletResponse response, @PathVariable("id") int id) throws Exception {
+        emailService.deleteEmailById(id);
+        return new ResponseEntity("Email was successfully delete!", HttpStatus.OK);
     }
 
 }

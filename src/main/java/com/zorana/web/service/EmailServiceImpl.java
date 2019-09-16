@@ -24,6 +24,7 @@ import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -45,9 +46,10 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Autowired
-    public EmailServiceImpl(EmailRepository repository) {
+    public EmailServiceImpl(EmailRepository repository, @Qualifier("javaMailSender") JavaMailSender javaMailSender) {
         super();
         this.repository = repository;
+        this.javaMailSender = javaMailSender;
     }
 
     @Override
@@ -139,6 +141,17 @@ public class EmailServiceImpl implements EmailService {
             helper.setTo(email.getToUser());
         }
         javaMailSender.send(msg);
+
+    }
+
+    @Override
+    public boolean deleteEmailById(int id) {
+        try {
+            repository.deleteById(id);
+            return true;
+        } catch (Exception ex) {
+            return false;
+        }
 
     }
 

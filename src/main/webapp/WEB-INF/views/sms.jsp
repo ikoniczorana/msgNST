@@ -365,7 +365,7 @@
             font-family: Arial, Helvetica, sans-serif;
             margin: 0;
         }
-        
+
 
 
     </style>
@@ -376,37 +376,18 @@
             <a href="/MsgNST/sms" class="active">SMS message</a>
             <a href="/MsgNST/" class="right">Logout</a>
         </div>
-        <form  action="emailProcess" method="post" enctype="multipart/form-data">
+        <form  action="messageProcess" method="post" >
             <table>
 
                 <tr>
 
                 </tr>
-                <tr>
-                    <td><b>From</b></td>
-                    <td>
-                        <input type="text" name = "from" size ="75" value="${emailaddress}" >
-                    </td>
 
-                </tr>
                 <tr>
                     <td><b>To:</b></td>
                     <td>
                         <input type="text" name = "to" size ="75" >
                     </td>
-
-                </tr>
-                <tr>
-                    <td><b>Cc:</b></td>
-                    <td>
-                        <input type="text" name = "cc" size ="75" >
-                    </td>
-
-                </tr>
-                <tr>
-                    <td><b>Subject:</b> </td>
-                    <td>
-                        <input type="text" name = "subject" size ="75" >                    </td>
 
                 </tr>
                 <tr>
@@ -416,14 +397,6 @@
                     </td>
 
                 </tr>
-                <tr>
-                    <td><b>Attachment: </b></td>
-                    <td>
-                        <input type="file" name="file" >
-                    </td>
-
-                </tr>
-
                 <tr>
                     <td></td>
                     <td>

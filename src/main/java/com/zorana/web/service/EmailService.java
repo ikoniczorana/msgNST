@@ -22,5 +22,7 @@ public interface EmailService {
     public void sendEmail(Email email);
     
     public void sendEmailWithAttachment(Email email, MultipartFile file) throws Exception;
+    
+    public boolean deleteEmailById(int id);
 
 }

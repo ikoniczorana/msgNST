@@ -31,6 +31,8 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "user")
 public class User {
 
+    
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,7 +50,8 @@ public class User {
     private String password;
     @OneToMany(mappedBy = "userid")
     private List<Email> emailCollection;
-
+    @OneToMany(mappedBy = "userid")
+    private List<Sms> smsList;
     public User() {
     }
 
@@ -89,7 +92,7 @@ public class User {
     }
 
     @XmlTransient
-    public Collection<Email> getEmailCollection() {
+    public List<Email> getEmailCollection() {
         return emailCollection;
     }
 
@@ -120,6 +123,15 @@ public class User {
     @Override
     public String toString() {
         return username;
+    }
+
+    @XmlTransient
+    public List<Sms> getSmsList() {
+        return smsList;
+    }
+
+    public void setSmsList(List<Sms> smsList) {
+        this.smsList = smsList;
     }
 
 }
